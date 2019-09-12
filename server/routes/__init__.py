@@ -1,12 +1,18 @@
 from server.resources.users.user_controller import UserController
+from server.resources.home import HomeController
 
 
-routes = [{
-    "URL": "/",
-    "handler": UserController
-}]
 
 
-def application_routes(api):
-    for route in routes:
-        api.add_resource(route["handler"], route["URL"])
+routes = [
+    {
+        "URL": "/users",
+        "handler": UserController
+    },
+    {
+        "URL": "/",
+        "handler": HomeController
+    },
+]
+
+

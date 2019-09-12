@@ -1,29 +1,34 @@
-import app
-class User(app.db.Model):
+from manage import secure_password, db
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import (Column, Integer, String, DateTime, func)
+
+
+
+class User(db.Model):
     """This class represents the user table"""
 
     __table__name = 'users'
 
-    id = app.db.Column(app.db.Integer, primary_key=True)
-    name = app.db.Column(app.db.String(255))
-    email = app.db.Column(app.db.String(255), unique=True, index=True)
-    password = app.db.Column(app.db.String(255), unique=True)
+    id = Column(Integer, primary_key=True)
+    name = Column(String(255), nullable=False)
+    email = Column(String(255), unique=True, index=True, nullable=False)
+    password = Column(String(255), unique=True,nullable=False)
 
-    date_created = app.db.Column(app.db.DateTime, default=app.db.func.current_timestamp())
-    date_modified = app.db.Column(
-        app.db.DateTime, default=app.db.func.current_timestamp(),
-        onupdate=app.db.func.current_timestamp())
+    date_created = Column(DateTime, default=func.current_timestamp())
+    date_modified = Column(
+        DateTime, default=func.current_timestamp(),
+        onupdate=func.current_timestamp())
 
     def __init__(self, name, email, password):
         """Initializing with name"""
         self.name = name
         self.email = email
-        self.password = app.secure_password.generate_password_hash(password)
-
+        self.password = secure_password.generate_password_hash(password).decode('utf-8')
+        # self.password = password
 
     def save(self):
-        app.db.session.add(self)
-        app.db.session.commit()
+        db.session.add(self)
+        db.session.commit()
 
     @staticmethod
     def get_all():
@@ -34,8 +39,8 @@ class User(app.db.Model):
         return User.query().filter_by(id=value).first()
 
     def delete(self):
-        app.db.session.delete(self)
-        app.db.session.commit()
+        db.session.delete(self)
+        db.session.commit()
 
-    def __refr__(self):
+    def __repr__(self):
         return "<User: {}>".format(self.name)

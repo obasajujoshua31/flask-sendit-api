@@ -1,17 +1,13 @@
-from flask import Flask
-from server.config import app_config
-from server.routes import application_routes
+def install_routes(api, routes):
+    for route in routes:
+        api.add_resource(route["handler"], route["URL"])
 
-def create_app(app_name, config_file, db, api):
-    app = Flask(__name__)
+def create_app(app_name, config_file, api, flask, app_config, routes, db):
+    app = flask(__name__,instance_relative_config=True)
     app.config.from_object(app_config[app_name])
     app.config.from_pyfile(config_file)
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
-    import models
+    endpoints = api(app)
+    install_routes(endpoints, routes)
     db.init_app(app)
-    initialize_routes(app, api)
     return app
-
-def initialize_routes(app, Api):
-    endpoints = Api(app)
-    application_routes(endpoints)
