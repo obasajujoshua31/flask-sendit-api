@@ -6,6 +6,17 @@ from server.form import form_get, confirm_is_json
 
 #
 
+def all_parcels(parcels):
+    response = []
+    for parcel in parcels:
+        response.append({
+            "id": parcel.id,
+            "name": parcel.name,
+            "destination": parcel.destination,
+            "pick_up_location": parcel.pick_up_location
+        })
+    return response
+
 
 class UserController(Resource, Response):
     def get(self):
@@ -16,7 +27,9 @@ class UserController(Resource, Response):
             response.append({
                 "id": user.id,
                 "email": user.email,
-                "name": user.name
+                "name": user.name,
+                "parcels": all_parcels(user.parcels)
+
             })
         return Response.client_response(self, 200, True, response)
 
@@ -49,7 +62,7 @@ class UserController(Resource, Response):
                             password=password)
                 user.save()
 
-                access_token = create_access_token(identity=user.id)
+                access_token = create_access_token(identity=user.id, expires_delta=False)
                 return Response.client_response(self, 201, True, {
                     "name": user.name,
                     "id": user.id,
@@ -60,3 +73,4 @@ class UserController(Resource, Response):
             return Response.client_response(self, 500, False, {"message": "the unexpected happened"})
 
     # class
+

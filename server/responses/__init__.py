@@ -16,3 +16,17 @@ class Response:
             return True
         except EmailNotValidError:
             return False
+
+    def parcel_response(self, parcel):
+        return {
+            "parcel_id": parcel.id,
+            "parcel_name": parcel.name,
+            "parcel_status": parcel.status,
+            "parcel_destination": parcel.destination,
+            "parcel_pick_up_location": parcel.pick_up_location,
+            "owner": {
+                "id": parcel.owner.id,
+                "name": parcel.owner.name,
+                "email": parcel.owner.email
+            }
+        }

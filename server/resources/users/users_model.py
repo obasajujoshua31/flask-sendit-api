@@ -2,6 +2,7 @@ from app import db
 from sqlalchemy.orm import relationship
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import (Column, Integer, String, DateTime, func)
+from server.resources.parcel.parcel_model import Parcel
 
 
 class User(db.Model):
@@ -17,7 +18,6 @@ class User(db.Model):
     date_modified = Column(
         DateTime, default=func.current_timestamp(),
         onupdate=func.current_timestamp())
-    children = relationship("Parcel")
 
     def __init__(self, name, email, password):
         """Initializing with name"""
@@ -45,3 +45,6 @@ class User(db.Model):
 
     def __repr__(self):
         return "<User: {}>".format(self.name)
+
+
+User.parcels = relationship("Parcel", order_by=Parcel.id, back_populates="owner")

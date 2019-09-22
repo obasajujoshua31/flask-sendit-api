@@ -26,7 +26,7 @@ class LoginController(Resource, Response):
             return Response.client_response(self, 401, False, "Invalid Login Credentials")
         else:
             return Response.client_response(self, 200, True, {
-                "access_token": create_access_token(identity=found_user.id),
+                "access_token": create_access_token(identity=found_user.id, expires_delta=False),
                 "id": found_user.id
             })
 
